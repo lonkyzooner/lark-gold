@@ -1,0 +1,1 @@
+/Users/bscott/Desktop/Lark/untitled\ folder/slate-purple-main/lark_voice_wasm/target/wasm32-unknown-unknown/release/lark_voice_wasm.wasm: /Users/bscott/Desktop/Lark/untitled\ folder/slate-purple-main/lark_voice_wasm/src/lib.rs
