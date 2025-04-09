@@ -39,6 +39,7 @@ interface MirandaLog {
 }
 
 class OrchestratorService {
+  private lastEmitted: number = 0;
   private conversationHistories: Record<string, Message[]> = {};
   private listeners: Record<string, ResponseListener[]> = {};
   private llmClient: LLMClient;
