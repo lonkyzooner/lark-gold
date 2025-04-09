@@ -23,6 +23,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
+// Mount OpenRouter API endpoint
+app.post('/api/openrouter', openrouterHandler);
+
 app.use(require('./server/routes/mirandaLog'));
 app.use(require('./server/routes/translate'));
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLarkAgent } from '../contexts/LarkAgentContext';
 
 const ConversationPanel: React.FC = () => {
-  const { messages, isLoading, error, suggestions, addSuggestion, sendText } = useLarkAgent();
+  const { messages, isLoading, error, suggestions, addSuggestion, removeSuggestion, sendText } = useLarkAgent();
   const [input, setInput] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,6 +51,12 @@ const ConversationPanel: React.FC = () => {
                   className="px-2 py-1 rounded bg-green-600 hover:bg-green-700 text-white text-xs"
                 >
                   Accept
+                </button>
+                <button
+                  onClick={() => removeSuggestion(sugg)}
+                  className="px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-xs"
+                >
+                  Dismiss
                 </button>
               </div>
             ))}
