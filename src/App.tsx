@@ -15,7 +15,6 @@ import { VoiceAssistantV2 } from './components/VoiceAssistantV2';
 import ChatBox from './components/ChatBox';
 const MirandaRights = lazy(() => import('./components/MirandaRights').then(module => ({ default: module.MirandaRights })));
 const RSCodes = lazy(() => import('./components/RSCodes').then(module => ({ default: module.RSCodes })));
-const ReportAssistant = lazy(() => import('./components/ReportAssistant'));
 const MirandaWorkflow = lazy(() => import('./components/MirandaWorkflow'));
 const ThreatDetection = lazy(() => import('./components/ThreatDetection').then(module => ({ default: module.ThreatDetection })));
 const IncidentTimeline = lazy(() => import('./components/IncidentTimeline'));
@@ -289,18 +288,7 @@ function App({ initialTab = 'voice' }: AppProps) {
               </TabsContent>
 
               <TabsContent value="reports" className="focus-visible:outline-none focus-visible:ring-0 m-0 animate-in fade-in-50 data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=active]:duration-300">
-                <Suspense fallback={<div className="p-8 text-center">Loading Report Assistant...</div>}>
-                  <div className="rounded-lg border border-blue-900/50 bg-blue-950/10 p-4 mb-6">
-                    <h3 className="text-lg font-semibold mb-2 text-blue-300 flex items-center gap-2">
-                      <FileTextIcon className="h-5 w-5" />
-                      Report Assistant
-                    </h3>
-                    <p className="text-blue-400/70 text-sm mb-4">
-                      Review, edit, and improve your reports with AI assistance.
-                    </p>
-                    <ReportAssistant />
-                  </div>
-                </Suspense>
+                {/* Report Assistant temporarily removed due to missing component */}
               </TabsContent>
               
               <TabsContent value="tools" className="focus-visible:outline-none focus-visible:ring-0 m-0 animate-in fade-in-50 data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=active]:duration-300">
