@@ -1,5 +1,6 @@
 // App.tsx - LARK Voice Assistant
 import React, { useState, useEffect, lazy, Suspense } from 'react';
+import AssistantController from './components/AssistantController';
 import './styles/voice-assistant.css';
 import './styles/fluid-theme.css';
 // Import smaller components directly
@@ -271,10 +272,7 @@ function App({ initialTab = 'voice' }: AppProps) {
             <div className="fluid-card rounded-xl overflow-hidden border border-[rgba(255,255,255,0.3)] shadow-md backdrop-blur-sm bg-opacity-90" style={{ background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(12px)' }}>
               <TabsContent value="voice" className="focus-visible:outline-none focus-visible:ring-0 m-0 animate-in fade-in-50 data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=active]:duration-300">
                   <Suspense fallback={<div className="p-8 text-center">Loading voice assistant...</div>}>
-                    <div className="flex flex-col gap-4">
-                      {/* <VoiceAssistantV2 /> */}
-                      <ChatBox messages={messages} setMessages={setMessages} isSpeaking={false} />
-                    </div>
+                    <AssistantController />
                   </Suspense>
               </TabsContent>
 
