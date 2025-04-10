@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
-import { useLarkAgent } from '../contexts/LarkAgentContext';
+import React, { useState, useEffect } from 'react';
+import orchestrator from '../services/LarkOrchestrator';
 
 const ConversationPanel: React.FC = () => {
-  const { messages, isLoading, error, suggestions, addSuggestion, removeSuggestion, sendText } = useLarkAgent();
   const [input, setInput] = useState('');
+  const [messages, setMessages] = useState(orchestrator.getState().messages);
+  const [suggestions, setSuggestions] = useState(orchestrator.getState().suggestions);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const state = orchestrator.getState();
+      setMessages([...state.messages]);
+      setSuggestions([...state.suggestions]);
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    await sendText(input);
+    orchestrator.handleTextInput(input);
     setInput('');
   };
 
-  const handleAccept = async (suggestion: string) => {
-    await sendText(suggestion);
-    // Optionally remove suggestion after accepting
-    // (not implemented here for simplicity)
+  const handleAccept = (suggestion: string) => {
+    orchestrator.handleTextInput(suggestion);
+    // Optionally clear suggestions after accepting
+    orchestrator.clearSuggestions();
   };
 
   return (
@@ -23,23 +32,17 @@ const ConversationPanel: React.FC = () => {
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`p-3 rounded-lg max-w-[80%] ${
+            className={`px-4 py-3 rounded-2xl max-w-[75%] shadow transition-all duration-200 ${
               msg.role === 'user'
-                ? 'ml-auto bg-blue-500 text-white'
+                ? 'ml-auto bg-gradient-to-br from-blue-500 to-blue-700 text-white'
                 : msg.role === 'assistant'
-                ? 'mr-auto bg-gray-300 dark:bg-gray-700 text-black dark:text-white'
+                ? 'mr-auto bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-800 text-black dark:text-white'
                 : 'mx-auto bg-yellow-200 text-black'
             }`}
           >
-            <div className="whitespace-pre-wrap">{msg.content}</div>
+            <div className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</div>
           </div>
         ))}
-        {isLoading && (
-          <div className="text-center text-gray-500">LARK is thinking...</div>
-        )}
-        {error && (
-          <div className="text-center text-red-500">{error}</div>
-        )}
         {suggestions.length > 0 && (
           <div className="mt-4 space-y-2">
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Suggestions:</h3>
@@ -53,7 +56,10 @@ const ConversationPanel: React.FC = () => {
                   Accept
                 </button>
                 <button
-                  onClick={() => removeSuggestion(sugg)}
+                  onClick={() => {
+                    orchestrator.getState().suggestions = orchestrator.getState().suggestions.filter(s => s !== sugg);
+                    setSuggestions([...orchestrator.getState().suggestions]);
+                  }}
                   className="px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-xs"
                 >
                   Dismiss
@@ -68,12 +74,12 @@ const ConversationPanel: React.FC = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 p-2 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white"
+          className="flex-1 p-3 rounded-full border border-gray-500 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
         />
         <button
           type="submit"
-          disabled={isLoading || !input.trim()}
-          className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+          disabled={!input.trim()}
+          className="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 shadow transition-all duration-200"
         >
           Send
         </button>

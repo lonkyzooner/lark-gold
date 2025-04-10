@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useLiveKitVoice } from '../contexts/LiveKitVoiceContext';
-import { useLarkAgent } from '../contexts/LarkAgentContext';
+import orchestrator from '../services/LarkOrchestrator';
 
 const VoiceModule: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const { sendText } = useLarkAgent();
   const [partial, setPartial] = useState('');
 
   // Simulate real-time transcription updates
@@ -25,7 +24,7 @@ const VoiceModule: React.FC = () => {
       disconnect();
       setIsRecording(false);
       if (transcript.trim()) {
-        await sendText(transcript.trim());
+        orchestrator.handleVoiceInput(transcript.trim());
       }
     } else {
       const granted = await requestMicrophonePermission();
