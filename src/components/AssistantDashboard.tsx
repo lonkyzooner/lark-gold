@@ -9,13 +9,26 @@ const AssistantDashboard: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-900 text-white">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-3 bg-gradient-to-r from-blue-900 to-blue-700 shadow-md sticky top-0 z-50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-900 font-bold">L</div>
+          <h1 className="text-xl font-semibold">LARK Assistant</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="px-3 py-1 rounded-full bg-green-600 text-white text-xs flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span> Active
+          </span>
+          <button className="px-4 py-1 rounded-full bg-white text-blue-900 font-semibold hover:bg-gray-200 transition">My Account</button>
+        </div>
+      </header>
       <div className="flex flex-1 overflow-hidden">
         {/* Left: Conversation and suggestions */}
         <div className="flex flex-col w-1/2 border-r border-gray-700 overflow-hidden">
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
             <ConversationPanel />
           </div>
-          <div className="border-t border-gray-700 p-2">
+          <div className="border-t border-gray-700 p-4 bg-gray-100 dark:bg-gray-800">
             <VoiceModule />
           </div>
         </div>
