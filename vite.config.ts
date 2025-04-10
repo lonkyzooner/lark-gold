@@ -27,6 +27,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // increase precache limit to 5MB
+      },
       manifest: {
         name: 'Lark App',
         short_name: 'Lark',
