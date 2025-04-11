@@ -63,6 +63,7 @@ export default defineConfig({
     },
   },
   build: {
+    sourcemap: true,
     rollupOptions: {
       // Properly handle external dependencies
       external: [
