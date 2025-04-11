@@ -139,14 +139,16 @@ class OrchestratorService {
   }
 
   private async routeToLLM(input: OrchestratorInput, intent: string, action: any): Promise<string> {
+    console.log('[Orchestrator] routeToLLM called with:', { input, intent, action });
     const retrievedSnippets = await this.retrieveKnowledge(input.content);
     const history = this.conversationHistories[input.userId] || [];
     const mappedHistory = history.map(m => ({ role: m.role, content: m.content }));
 
     const selected = this.selectLLM(intent);
-    console.log(`[Orchestrator] Routing to LLM: ${selected.name}`);
+    console.log(`[Orchestrator] Routing to LLM: ${selected.name}`, { mappedHistory, retrievedSnippets });
 
     const reply = await selected.client.generateReply(input.userId, mappedHistory, retrievedSnippets);
+    console.log('[Orchestrator] LLM reply:', reply);
     return reply;
   }
 

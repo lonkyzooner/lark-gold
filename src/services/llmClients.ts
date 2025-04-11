@@ -10,6 +10,7 @@ export class UnifiedLLMClient implements LLMClient {
   }
 
   async generateReply(userId: string, history: { role: string; content: string }[], retrievedSnippets: string[]): Promise<string> {
+    console.log('[UnifiedLLMClient] generateReply called with:', { userId, history, retrievedSnippets });
     const larkPersona = `You are LARK (Law Enforcement Assistance and Response Kit), a voice-activated AI assistant designed for solo police officers in Louisiana. You act as an autonomous conversational agent, managing all system functionality through natural, context-aware conversation. Your primary goal is to enhance officer safety and efficiency by automating critical tasks, anticipating needs, and providing proactive support during high-pressure situations. Respond in a professional, concise, and authoritative tone, keeping responses to 1–2 sentences.`;
 
     const systemPrompt = retrievedSnippets.length
@@ -31,12 +32,16 @@ export class UnifiedLLMClient implements LLMClient {
         }),
       });
 
+      console.log('[UnifiedLLMClient] /api/openrouter response:', response);
+
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('[UnifiedLLMClient] Server error:', response.status, errorText);
         throw new Error(`Server error: ${response.status} ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('[UnifiedLLMClient] /api/openrouter data:', data);
       return data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response.';
     } catch (error) {
       console.error('[UnifiedLLMClient] API error:', error);
