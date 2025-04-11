@@ -90,34 +90,30 @@ class OrchestratorService {
     this.processInput(input);
   }
 
+  // Handler map for modular action routing (shorter, arrow functions)
+  private actionHandlers: Record<string, (i: OrchestratorInput, a: any) => Promise<void> | void> = {
+    statute_search: (i) => this.handleStatuteSearch(i.userId, i.content),
+    miranda: (i, a) => this.handleMiranda(i.userId, a.language || 'english'),
+    tool_use: async (i, a) => this.invokeTool(i, await this.classifyIntent(i), a),
+    llm_response: async (i, a) => {
+      const reply = await this.routeToLLM(i, await this.classifyIntent(i), a);
+      this.emitResponse({ userId: i.userId, type: 'text', content: reply });
+      this.speakWithLiveKit(i.userId, reply);
+    }
+  };
+
   private async processInput(input: OrchestratorInput): Promise<void> {
-    console.log('[Orchestrator] Processing input:', input);
-
-    const intent = await this.classifyIntent(input);
-
-    const action = await this.decideNextAction(input, intent);
-
-    switch (action.type) {
-      case 'statute_search':
-        this.handleStatuteSearch(input.userId, input.content);
-        break;
-      case 'miranda':
-        this.handleMiranda(input.userId, action.language || 'english');
-        break;
-      case 'tool_use':
-        await this.invokeTool(input, intent, action);
-        break;
-      case 'llm_response':
-      default:
-        const reply = await this.routeToLLM(input, intent, action);
-        const textResponse: OrchestratorResponse = {
-          userId: input.userId,
-          type: 'text',
-          content: reply,
-        };
-        this.emitResponse(textResponse);
-        this.speakWithLiveKit(input.userId, reply);
-        break;
+    try {
+      const intent = await this.classifyIntent(input);
+      const action = await this.decideNextAction(input, intent);
+      await (this.actionHandlers[action.type] || this.actionHandlers.llm_response).call(this, input, action);
+    } catch (error) {
+      console.error('[Orchestrator] Handler error:', error);
+      this.emitResponse({
+        userId: input.userId,
+        type: 'text',
+        content: 'Sorry, I encountered an error processing your request. Please try again.',
+      });
     }
   }
 

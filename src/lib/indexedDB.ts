@@ -18,7 +18,7 @@ interface LarkDB extends DBSchema {
   offlineQueue: {
     key: number;
     value: {
-      id: number;
+      id?: number; // Make id optional for auto-increment
       message: string;
       timestamp: number;
       processed: boolean;
@@ -46,8 +46,8 @@ interface LarkDB extends DBSchema {
 }
 
 // Database version
-const DB_VERSION = 1;
-const DB_NAME = 'lark-database';
+const DB_VERSION = 4;
+const DB_NAME = 'lark-db';
 
 // Database connection
 let dbPromise: Promise<IDBPDatabase<LarkDB>>;
@@ -186,6 +186,7 @@ export const offlineQueueDB = {
     try {
       const db = await getDB();
       await db.add('offlineQueue', {
+        // id will be auto-incremented
         message,
         timestamp: Date.now(),
         processed: false
@@ -204,11 +205,14 @@ export const offlineQueueDB = {
     try {
       const db = await getDB();
       const items = await db.getAllFromIndex('offlineQueue', 'by-processed', false);
-      return items.map(item => ({
-        id: item.id,
-        message: item.message,
-        timestamp: item.timestamp
-      }));
+      // Filter out items where id is undefined (shouldn't happen, but for type safety)
+      return items
+        .filter(item => typeof item.id === 'number')
+        .map(item => ({
+          id: item.id as number,
+          message: item.message,
+          timestamp: item.timestamp
+        }));
     } catch (error) {
       console.error('Error getting unprocessed messages:', error);
       return [];
@@ -340,7 +344,8 @@ export const statutesDB = {
   async getStatute(id: string): Promise<{ id: string; title: string; content: string; lastUpdated: number } | null> {
     try {
       const db = await getDB();
-      return await db.get('statutes', id);
+      const result = await db.get('statutes', id);
+      return result ?? null;
     } catch (error) {
       console.error('Error getting statute:', error);
       return null;

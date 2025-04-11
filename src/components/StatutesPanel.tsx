@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { BookOpenIcon, SendIcon } from "lucide-react";
+import { getChatCompletion } from "../lib/openai-service";
 
 // Standardized, security-focused statute prompt
 function buildStatutePrompt(query: string) {
@@ -26,18 +27,22 @@ export default function StatutesPanel() {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Simulate AI call (replace with real backend integration)
+  // Real AI call using backend integration
   const handleLookup = async () => {
     if (!query.trim()) return;
     setLoading(true);
     setResult(null);
-    // Simulate network/AI delay
-    setTimeout(() => {
-      setResult(
-        `Statute summary for "${query}":\n\n(This is a simulated response. Integrate backend AI here.)`
-      );
-      setLoading(false);
-    }, 1200);
+    try {
+      const prompt = buildStatutePrompt(query);
+      const aiResult = await getChatCompletion([
+        { role: "system", content: "You are LARK, a Louisiana law enforcement legal assistant." },
+        { role: "user", content: prompt }
+      ]);
+      setResult(aiResult.trim());
+    } catch (err) {
+      setResult("Error: Unable to fetch statute summary. Please try again.");
+    }
+    setLoading(false);
   };
 
   return (
