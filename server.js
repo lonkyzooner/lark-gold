@@ -28,6 +28,7 @@ app.post('/api/openrouter', openrouterHandler);
 
 app.use(require('./server/routes/mirandaLog'));
 app.use(require('./server/routes/translate'));
+app.use('/api/orchestrate', require('./server/routes/orchestrate'));
 
 // Add security headers
 app.use(helmet({

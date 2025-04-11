@@ -9,7 +9,7 @@ export interface CommandResponse {
 }
 
 export async function getChatCompletion(messages: { role: string; content: string }[], model = 'gpt-4'): Promise<string> {
-  const response = await fetch('/api/openai/v1/chat/completions', {
+  const response = await fetch('/api/openrouter', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

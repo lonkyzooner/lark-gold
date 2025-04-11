@@ -2,7 +2,7 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import './styles/voice-assistant.css';
 import './styles/fluid-theme.css';
 import { LarkAgentProvider } from './contexts/LarkAgentContext';
-import AssistantDashboard from './components/AssistantDashboard';
+import LarkMainLayout from './components/LarkMainLayout';
 import ConversationPanel from './components/ConversationPanel';
 import VoiceModule from './components/VoiceModule';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/tabs';
@@ -37,7 +37,7 @@ function App() {
   return (
     <LiveKitVoiceProvider>
       <LarkAgentProvider>
-        <AssistantDashboard />
+        <LarkMainLayout />
       </LarkAgentProvider>
     </LiveKitVoiceProvider>
   );

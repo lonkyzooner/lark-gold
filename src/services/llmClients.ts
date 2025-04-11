@@ -23,7 +23,7 @@ export class UnifiedLLMClient implements LLMClient {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: this.model,
+          model: "optimusalpha",
           messages: [
             { role: 'system', content: systemPrompt },
             ...history,

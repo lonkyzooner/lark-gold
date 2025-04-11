@@ -1,13 +1,18 @@
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 
-mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Replace with your Mapbox token
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
+mapboxgl.accessToken = MAPBOX_TOKEN;
 
 const MapPanel: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
   useEffect(() => {
+    if (!MAPBOX_TOKEN) {
+      console.warn("Mapbox access token is missing. Set VITE_MAPBOX_TOKEN in your environment.");
+      return;
+    }
     if (mapRef.current || !mapContainer.current) return;
 
     mapRef.current = new mapboxgl.Map({
@@ -24,6 +29,14 @@ const MapPanel: React.FC = () => {
       mapRef.current?.remove();
     };
   }, []);
+
+  if (!MAPBOX_TOKEN) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-blue-950/80 rounded-lg border border-red-500 text-red-300 p-4">
+        Map unavailable: Mapbox access token is not configured. Please contact your administrator.
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full">

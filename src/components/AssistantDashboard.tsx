@@ -19,7 +19,6 @@ const AssistantDashboard: React.FC = () => {
           <span className="px-3 py-1 rounded-full bg-green-600 text-white text-xs flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span> Active
           </span>
-          <button className="px-4 py-1 rounded-full bg-white text-blue-900 font-semibold hover:bg-gray-200 transition">My Account</button>
         </div>
       </header>
       <div className="flex flex-1 overflow-hidden">

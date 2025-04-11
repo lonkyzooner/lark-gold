@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import orchestrator from '../services/LarkOrchestrator';
+import orchestrator, { LarkOrchestrator } from '../services/LarkOrchestrator';
+// Explicitly cast the orchestrator instance for TS
+const typedOrchestrator = orchestrator as unknown as LarkOrchestrator;
 
 const ConversationPanel: React.FC = () => {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState(orchestrator.getState().messages);
-  const [suggestions, setSuggestions] = useState(orchestrator.getState().suggestions);
+  const [messages, setMessages] = useState(typedOrchestrator.getState().messages);
+  const [suggestions, setSuggestions] = useState(typedOrchestrator.getState().suggestions);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const state = orchestrator.getState();
+      const state = typedOrchestrator.getState();
       setMessages([...state.messages]);
       setSuggestions([...state.suggestions]);
     }, 500);
@@ -16,20 +18,20 @@ const ConversationPanel: React.FC = () => {
   }, []);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    orchestrator.handleTextInput(input);
+    typedOrchestrator.handleTextInput(input);
     setInput('');
   };
 
   const handleAccept = (suggestion: string) => {
-    orchestrator.handleTextInput(suggestion);
+    typedOrchestrator.handleTextInput(suggestion);
     // Optionally clear suggestions after accepting
-    orchestrator.clearSuggestions();
+    typedOrchestrator.clearSuggestions();
   };
 
   return (
     <div className="flex flex-col h-full p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 overflow-y-auto space-y-2">
-        {messages.map((msg, idx) => (
+        {messages.map((msg: { role: string; content: string }, idx: number) => (
           <div
             key={idx}
             className={`px-4 py-3 rounded-2xl max-w-[75%] shadow transition-all duration-200 ${
@@ -46,7 +48,7 @@ const ConversationPanel: React.FC = () => {
         {suggestions.length > 0 && (
           <div className="mt-4 space-y-2">
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Suggestions:</h3>
-            {suggestions.map((sugg, idx) => (
+            {suggestions.map((sugg: string, idx: number) => (
               <div key={idx} className="flex items-center gap-2 p-2 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <span className="flex-1">{sugg}</span>
                 <button
@@ -57,8 +59,8 @@ const ConversationPanel: React.FC = () => {
                 </button>
                 <button
                   onClick={() => {
-                    orchestrator.getState().suggestions = orchestrator.getState().suggestions.filter(s => s !== sugg);
-                    setSuggestions([...orchestrator.getState().suggestions]);
+                    typedOrchestrator.getState().suggestions = typedOrchestrator.getState().suggestions.filter((s: string) => s !== sugg);
+                    setSuggestions([...typedOrchestrator.getState().suggestions]);
                   }}
                   className="px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-xs"
                 >

@@ -61,10 +61,13 @@ export const LarkAgentProvider = ({ children }: { children: ReactNode }) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: 'quasar-alpha',
+            model: 'optimusalpha',
             messages: [
               { role: 'system', content: 'You are LARK, an autonomous law enforcement assistant.' },
-              ...messages.map(m => ({ role: m.role, content: m.content })),
+              ...messages.map(m => ({
+                role: m.role,
+                content: m.content
+              })),
               { role: 'user', content: text.trim() }
             ]
           }),
